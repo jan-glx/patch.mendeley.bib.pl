@@ -14,6 +14,9 @@ use English qw(-no_match_vars);
 use File::Spec;
 my ($tex_file, $mendeley_bib_base) = @ARGV; 
 
+#to compare last modified dates
+use File::stat;
+
 
 # find used .bib file names
 open my $TEXFILE, $tex_file or croak "Cannot open $tex_file: $OS_ERROR";
@@ -27,6 +30,12 @@ close $TEXFILE or croak "Cannot close $tex_file: $OS_ERROR";
 
 foreach my $out_file (@bib_files) {
 	my $in_file = File::Spec->catfile($mendeley_bib_base, $out_file);
+	
+	# if Mendeley's .bib file is older than the previously patched one (the one in this folder), skip it
+	if (stat($in_file)->mtime <= stat($out_file)->mtime) {
+		print "skipping $out_file (already up to date)";
+		next;
+	}
 	print "importing and patching $in_file";
 	
 	open my $INFILE, $in_file or croak "Could not open $in_file: $OS_ERROR";
