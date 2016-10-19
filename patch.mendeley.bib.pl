@@ -48,10 +48,10 @@ foreach my $out_file (@bib_files) {
 		print { $OUTFILE } "\n\n" or croak "Cannot write to $out_file: $OS_ERROR";
 	
 	while(<$INFILE>)  {   
-		# remove double brackets around titles and add brackes around words that contain non primal upper case letters like FBI or iPhone:
+		# remove double brackets around titles and add brackes around words that contain non primal upper case letters like FBI or iPhone or numbers like Cas9 and around single uppercase latters other than "A":
 		if (/title ?= ?\{.*\},/) {
 			s/^title ?= ?\{\{([^\n]*)\}\},$/title = \{$1\},/;
-			s/(\W)(\w+[A-Z]\w*)/$1\{$2\}/g;
+			s/((?=\w+[A-Z]|[A-z]\w*[0-9])\w+|[B-Z](?=\W))/\{$1\}/g;
 		}
 		# Allow encoding "in press" articles in Medeley by using years 3000 to 3999 (can be used to order items):
 		s/^year ?= ?\{(3[0-9]{3})\}/year = \{\\noop\{$1\}in press\}/; 
