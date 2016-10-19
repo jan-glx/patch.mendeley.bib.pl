@@ -32,7 +32,9 @@ foreach my $out_file (@bib_files) {
 	my $in_file = File::Spec->catfile($mendeley_bib_base, $out_file);
 	
 	# if Mendeley's .bib file is older than the previously patched one (the one in this folder), skip it
-	if (stat($in_file)->mtime <= stat($out_file)->mtime) {
+	my $sin_file = stat($in_file);
+	my $sout_file = stat($out_file);
+	if ($sin_file && $sout_file && $sin_file->mtime <= $sout_file->mtime) {
 		print "skipping $out_file (already up to date)";
 		next;
 	}
